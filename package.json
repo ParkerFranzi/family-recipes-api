@@ -1,7 +1,7 @@
 {
   "name": "family-recipes-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Family Recipes API",
   "main": "index.js",
   "scripts": {
     "test": "mocha --require test/setup.js",
@@ -17,14 +17,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "helmet": "^3.21.2",
-    "knex": "^0.20.2",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "helmet": "^3.15.0",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.16.3",
     "morgan": "^1.9.1",
-    "pg": "^7.14.0",
-    "xss": "^1.0.6"
+    "multer": "^1.4.2",
+    "pg": "^7.8.0",
+    "treeize": "^2.1.2",
+    "xss": "^1.0.3"
   },
   "devDependencies": {
     "chai": "^4.2.0",

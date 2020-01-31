@@ -7,7 +7,7 @@ TRUNCATE
 
 INSERT INTO family_recipes_users (fName, lName, email, picture, role, password)
 VALUES
-    ('Parker', 'Franzi', 'parker.franzi@gmail.com', 'https://www.parkerfranzi.com/wp-content/uploads/2017/08/profile-with-lucky.png', 1, 'qwerty'),
+    ('Parker', 'Franzi', 'parker.franzi@gmail.com', 'https://www.parkerfranzi.com/wp-content/uploads/2017/08/profile-with-lucky.png', 3, 'qwerty'),
     ('Lucky','Franzi','lucky.franzi@gmail.com','https://www.parkerfranzi.com/wp-content/uploads/2020/01/lucky-scaled.jpg', 2, 'asdfg'),
     ('Diane','Franzi','diane.franzi@gmail.com','https://www.parkerfranzi.com/wp-content/uploads/2017/08/profile-with-lucky.png', 2, 'zxcvb');
 
