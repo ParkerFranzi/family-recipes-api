@@ -10,41 +10,27 @@ const RecipesService = {
             .select('*').from('family_recipes_recipes AS recipes')
             .where('recipes.userid', userId)
     },
-    hasUserWithUserEmail(db, email) {
-        return db('family_recipes_users')
-            .where({ email })
-            .first()
-            .then(user => !!user)
-    },
-    insertUser(db, newUser) {
+    insertRecipe(db, newRecipe) {
+        console.log(newRecipe)
         return db
-            .insert(newUser)
-            .into('family_recipes_users')
+            .insert(newRecipe)
+            .into('family_recipes_recipes')
             .returning('*')
-            .then(([user]) => user)
+            .then(([recipe]) => recipe)
     },
-    validatePassword(password) {
-        if (password.length < 8) {
-            return 'Password must be longer than 8 characters'
-        }
-        if (password.length > 72) {
-            return 'Password must be less than 72 characters'
-        }
-        if (password.startsWith(' ') || password.endsWith(' ')) {
-            return 'Password must not start or end with empty spaces'
-        }
-        if (!REGEX_UPPER_LOWER_NUMBER_SPECIAL.test(password)) {
-            return 'Password must contain 1 upper case, lower case, number and special character'
-        }
-        return null
-    },
-    serializeUser(user) {
+    serializeRecipe(recipe) {
         return {
-            id: user.id,
-            fname: xss(user.fname),
-            lname: xss(user.lname),
-            email: xss(user.email),
-            picture: xss(user.picture)
+            id: recipe.id,
+            dishname: xss(recipe.dishname),
+            description: xss(recipe.description),
+            ingredients: xss(recipe.ingredients),
+            instructions: xss(recipe.instructions),
+            preptime: xss(recipe.preptime),
+            cooktime: xss(recipe.cooktime),
+            userid: xss(recipe.userid),
+            image: recipe.image,
+            pic_type: xss(recipe.pic_type),
+            pic_name: xss(recipe.pic_name)
         }
     },
     hashPassword(password) {

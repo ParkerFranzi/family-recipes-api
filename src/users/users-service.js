@@ -49,7 +49,9 @@ const UsersService = {
             fname: xss(user.fname),
             lname: xss(user.lname),
             email: xss(user.email),
-            picture: xss(user.picture)
+            picture: user.picture,
+            pic_type: xss(user.pic_type),
+            pic_name: xss(user.pic_name)
         }
     },
     hashPassword(password) {
