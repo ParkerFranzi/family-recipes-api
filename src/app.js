@@ -17,6 +17,7 @@ app.use(morgan((NODE_ENV === 'production') ? 'tiny' : 'common', {
 app.use(helmet())
 app.use(cors())
 
+app.use('uploads', express.static('uploads'))
 app.use('/api/auth', authRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/recipes', recipesRouter)

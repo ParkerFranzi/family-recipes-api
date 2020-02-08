@@ -8,12 +8,6 @@ const AuthService = {
         .where( {email} )
         .first()
     },
-    parseBasicToken(token) {
-        return Buffer
-            .from(token, 'base64')
-            .toString()
-            .split(':')
-    },
     comparePasswords(password, hash) {
         return bcrypt.compare(password, hash)
     },

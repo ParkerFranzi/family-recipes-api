@@ -3,18 +3,37 @@ const xss = require('xss')
 const RecipesService = {
     getAllRecipes(db) {
         return db
-            .select('*').from('family_recipes_recipes')
+            .select('id', 'userid', 'dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'image', 'pic_type', 'pic_name').from('family_recipes_recipes')
     },
     getUsersRecipes(db, userId) {
         return db
-            .select('*').from('family_recipes_recipes AS recipes')
+            .select('id', 'userid', 'dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'image', 'pic_type', 'pic_name').from('family_recipes_recipes AS recipes')
             .where('recipes.userid', userId)
+    },
+    getRecipeById(db, recipeId) {
+        return db
+            .select('userid', 'dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'image', 'pic_type', 'pic_name').from('family_recipes_recipes AS recipes')
+            .where('recipes.id', recipeId)
+    },
+    getRecipeImage(db, imgName) {
+        return db
+            .select('image').from('family_recipes_recipes')
+            .where('pic_name', imgName)
+
     },
     insertRecipe(db, newRecipe) {
         console.log(newRecipe)
         return db
             .insert(newRecipe)
             .into('family_recipes_recipes')
+            .returning('*')
+            .then(([recipe]) => recipe)
+    },
+    updateRecipe(db, id, data) {
+        return db
+            .from('family_recipes_recipes')
+            .where({ id })
+            .update(data)
             .returning('*')
             .then(([recipe]) => recipe)
     },

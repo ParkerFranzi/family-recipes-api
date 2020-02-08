@@ -3,7 +3,7 @@ CREATE TABLE family_recipes_users (
     fName TEXT NOT NULL,
     lName TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    picture BYTEA NOT NULL,
+    picture TEXT NOT NULL,
     role INT NOT NULL DEFAULT 1,
     password TEXT NOT NULL
 );

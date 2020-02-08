@@ -6,7 +6,7 @@ CREATE TABLE family_recipes_recipes (
     description TEXT NOT NULL,
     ingredients JSON NOT NULL,
     instructions JSON NOT NULL,
-    image BYTEA NOT NULL,
+    image TEXT NOT NULL,
     prepTime TEXT NOT NULL,
     cookTime TEXT NOT NULL
 );

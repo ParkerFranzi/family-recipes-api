@@ -6,7 +6,12 @@ const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*
 const UsersService = {
     getAllUsers(db) {
         return db
-            .select('id', 'fname', 'lname', 'picture', 'email', 'pic_type', 'pic_name').from('family_recipes_users')
+            .select('id', 'fname', 'lname', 'email', 'pic_type', 'picture', 'pic_name', 'role').from('family_recipes_users')
+    },
+    getUserImage(db, userId) {
+        return db
+            .select('picture', 'pic_type').from('family_recipes_users')
+            .where('id', userId)
     },
     getUsersRecipes(db, userId) {
         return db
@@ -20,15 +25,19 @@ const UsersService = {
             .then(user => !!user)
     },
     insertUser(db, newUser) {
-        console.log(newUser)
         return db
             .insert(newUser)
             .into('family_recipes_users')
             .returning('*')
             .then(([user]) => user)
     },
+    updateUser(db, id, data) {
+        return db
+            .from('family_recipes_users')
+            .where({ id })
+            .update(data)
+    },
     validatePassword(password) {
-        console.log(password)
         if (password.length < 8) {
             return 'Password must be longer than 8 characters'
         }
