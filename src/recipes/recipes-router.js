@@ -32,9 +32,9 @@ recipesRouter
             .catch(next)
     })
 recipesRouter
-    .route('/images/:recipeId')
+    .route('/images/:imgName')
     .get((req, res, next) => {
-        RecipesService.getRecipeImage(req.app.get('db'), req.params.recipeId)
+        RecipesService.getRecipeImage(req.app.get('db'), req.params.imgName)
             .then(pictures => {
                 console.log(pictures[0])
                 res.sendFile(path.join(__dirname, `\..\\..\\${pictures[0].image}`));
