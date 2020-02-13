@@ -6,6 +6,8 @@ const jsonBodyParser = express.json()
 const multer = require('multer')
 const fs = require('fs')
 const { requireAuth } = require('../middleware/jwt-auth')
+const cloudinary = require('cloudinary').v2
+const { uploader, cloudinaryConfig } = require('../../cloudinaryConfig')
 
 
 // upload file path
@@ -23,6 +25,7 @@ var storage = multer.diskStorage({
  
 var upload = multer({ storage: storage })
 
+cloudinary.config(cloudinaryConfig)
 usersRouter
     .route('/')
     .get((req, res, next) => {
@@ -32,16 +35,16 @@ usersRouter
             })
             .catch(next)
     })
-usersRouter
-    .route('/images/:userId')
-    .get((req, res, next) => {
-        UsersService.getUserImage(req.app.get('db'), req.params.userId)
-            .then(pictures => {
-                console.log(pictures[0])
-                res.sendFile(path.join(__dirname, `\..\\..\\${pictures[0].picture}`));
-            })
-            .catch(next)
-    })
+// usersRouter
+//     .route('/images/:userId')
+//     .get((req, res, next) => {
+//         UsersService.getUserImage(req.app.get('db'), req.params.userId)
+//             .then(pictures => {
+//                 console.log(pictures[0])
+//                 res.sendFile(path.join(__dirname, `\..\\..\\${pictures[0].picture}`));
+//             })
+//             .catch(next)
+//     })
 usersRouter
     .route('/:userId')
     .get((req, res, next) => {
@@ -59,6 +62,7 @@ usersRouter
         const picture = req.file.path
         const pic_type = req.file.mimetype
         const pic_name = req.file.originalname
+        const public_id = ''
 
         console.log(req.file)
         for (const field of ['fname', 'lname', 'email', 'password']) {
@@ -70,6 +74,10 @@ usersRouter
         if (!req.file)
             return res.status(400).json({
                 error: `Missing picture in request body`
+            })
+        if (req.file.size > 3145728)
+            return res.status(400).json({
+                error: `Image size must be under 3MB`
             })
         const passwordError = UsersService.validatePassword(password)
         if (passwordError) 
@@ -90,20 +98,29 @@ usersRouter
                                 lname,
                                 email,
                                 picture,
+                                public_id,
                                 pic_type,
                                 pic_name,
                                 password: hashedPassword
                             }
-                            return UsersService.insertUser(
-                                req.app.get('db'),
-                                newUser
-                            )
-                                .then(user => {
-                                    console.log(user)
-                                    res
-                                        .status(201)
-                                        .location(path.posix.join(req.originalUrl, `/${user.id}`))
-                                        .json(UsersService.serializeUser(user))
+                        
+                            return uploader.upload(picture)
+                                .then((result) => {
+                                    if (result) 
+                                        newUser.picture = result.url
+                                        newUser.public_id = result.public_id
+                                        console.log(newUser)
+                                        return UsersService.insertUser(
+                                            req.app.get('db'),
+                                            newUser
+                                        )
+                                    .then(user => {
+                                        console.log(user)
+                                        res
+                                            .status(201)
+                                            .location(path.posix.join(req.originalUrl, `/${user.id}`))
+                                            .json(UsersService.serializeUser(user))
+                                    })
                                 })
                         })
 

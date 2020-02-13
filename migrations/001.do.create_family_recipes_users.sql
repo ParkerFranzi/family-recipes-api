@@ -4,6 +4,7 @@ CREATE TABLE family_recipes_users (
     lName TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     picture TEXT NOT NULL,
+    public_id TEXT,
     role INT NOT NULL DEFAULT 1,
     password TEXT NOT NULL
 );

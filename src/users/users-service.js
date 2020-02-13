@@ -6,7 +6,7 @@ const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*
 const UsersService = {
     getAllUsers(db) {
         return db
-            .select('id', 'fname', 'lname', 'email', 'pic_type', 'picture', 'pic_name', 'role').from('family_recipes_users')
+            .select('id', 'fname', 'lname', 'email', 'pic_type', 'picture', 'pic_name', 'role', 'public_id').from('family_recipes_users')
     },
     getUserImage(db, userId) {
         return db
@@ -18,6 +18,11 @@ const UsersService = {
             .select('*').from('family_recipes_recipes AS recipes')
             .where('recipes.userid', userId)
     },
+    getUserRole(db, userId) {
+        return db
+            .select('role').from('family_recipes_users')
+            .where('id', userId)
+    },
     hasUserWithUserEmail(db, email) {
         return db('family_recipes_users')
             .where({ email })
@@ -25,6 +30,7 @@ const UsersService = {
             .then(user => !!user)
     },
     insertUser(db, newUser) {
+        console.log("test")
         return db
             .insert(newUser)
             .into('family_recipes_users')
