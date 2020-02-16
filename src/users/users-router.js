@@ -1,11 +1,12 @@
 const express = require('express')
 const path = require('path')
 const UsersService = require('./users-service')
+const AuthService = require('../auth/auth-service')
 const usersRouter = express.Router()
 const jsonBodyParser = express.json()
 const multer = require('multer')
 const fs = require('fs')
-const { requireAuth } = require('../middleware/jwt-auth')
+const { requireAuth, requireSpecificUser } = require('../middleware/jwt-auth')
 const cloudinary = require('cloudinary').v2
 const { uploader, cloudinaryConfig } = require('../../cloudinaryConfig')
 
@@ -48,7 +49,6 @@ usersRouter
 usersRouter
     .route('/:userId')
     .get((req, res, next) => {
-        console.log(req.params.userId)
         UsersService.getUsersRecipes(req.app.get('db'), req.params.userId)
             .then(recipes => {
                 res.json(recipes)
@@ -130,24 +130,120 @@ usersRouter
     })
 usersRouter
     .route('/:userId')
-    .all(requireAuth)
-    .patch(jsonBodyParser, (req, res, next) => {
-        const { password, fname, lname, email } = req.body
-        const picture = fs.readFileSync(req.file.path)
-        const pic_type = req.file.mimetype
-        const pic_name = req.file.originalname
-        const userToUpdate = { password, fname, lname, email, picture, pic_type, pic_name}
+    .all(requireSpecificUser)
+
+    .patch(upload.single('picture'), jsonBodyParser, (req, res, next) => {
+        console.log(1)
+        const { password, fname, lname, email, public_id, new_password, new_password_confirm } = req.body
+
+
+        const oldPicture = public_id
+        let userToUpdate = {}
+        let picture = ''
+        let pic_type = ''
+        let pic_name = ''
+        if (req.file === undefined) {
+            userToUpdate = { fname, lname, email }
+        }
+        else {
+            picture = req.file.path
+            pic_name = req.file.originalname
+            pic_type = req.file.mimetype
+            userToUpdate = { fname, lname, email, picture, pic_name, pic_type }
+            if (req.file.size > 3145728) {
+                return res.status(400).json({
+                    error: `Image size must be under 3MB`
+                })
+            }
+        }
+        console.log(2)
+        if (new_password.length > 0) {
+            const passwordError = UsersService.validatePassword(new_password)
+            if (passwordError) 
+                return res.status(400).json({ error: passwordError })
+            if (new_password !== new_password_confirm) {
+                return res.status(400).json({
+                    error: `new password must match comfirm password`
+                })
+            }
+            UsersService.hashPassword(new_password)
+                .then(hashedPassword => {
+                    userToUpdate.password = hashedPassword
+                })
+        }
+        console.log(userToUpdate)
         const numberOfValues = Object.values(userToUpdate).filter(Boolean).length
         if (numberOfValues === 0) {
             return res.status(400).json({
                 error: {
-                    message: `Request body must contain either 'fname', 'lname', 'picture' or 'content'`
+                    message: `Request body must contain either 'fname', 'lname', 'picture' or 'new password'`
                 }
                 
             })
         }
-        UsersService.updateUser(req.app.get('db'), req.params.userId, userToUpdate)
+        console.log(3)
+        AuthService.getUserWithEmail(req.app.get('db'), email)
+            .then(dbUser => {
+                console.log("test")
+                if (!dbUser)
+                    return res.status(400).json({
+                        error: `Incorrect password`
+                    })
+                AuthService.comparePasswords(password, dbUser.password)
+                    .then(compareMatch => {
+                        console.log("test 2")
+                        if (!compareMatch)
+                            return res.status(400).json({
+                                error: `Incorrect password`
+                            })
+                        if (userToUpdate.picture) {
+                            uploader.upload(picture).then((result) => {
+                                if (result)
+                                    userToUpdate.picture = result.url
+                                    userToUpdate.public_id = result.public_id
+                                    return UsersService.updateUser(
+                                        req.app.get('db'),
+                                        dbUser.id,
+                                        userToUpdate
+                                    )
+                                        .then(user => {
+                                            uploader.destroy(oldPicture)
+                                            console.log(user)
+                                            res
+                                                .status(201)
+                                                .json(UsersService.serializeUser(user))
+                                        })
+                                        .catch(next)
+                                .catch((err) => res.statusMessage(400).json({
+                                    error: `Something went wrong try again later`
+                                }))
+                            })
+                        }
+                        else {
+                            return UsersService.updateUser(req.app.get('db'), dbUser.id, userToUpdate)
+                                .then(user => {
+                                    console.log(user)
+                                    res
+                                        .status(201)
+                                        .json(UsersService.serializeUser(user))
+                                })
+                                .catch(next)
+                        }
+                    })
+                    
+        })
+        
+        return UsersService.updateUser(req.app.get('db'), req.params.userId, userToUpdate)
     })
 
-
+usersRouter
+    .route('/edit-user/:userId')
+    .all(requireSpecificUser)
+    .get((req, res, next) => {
+        UsersService.getUserById(req.app.get('db'), req.params.userId)
+            .then(user => {
+                res.json(user)
+            })
+            .catch(next)
+    })
 module.exports = usersRouter

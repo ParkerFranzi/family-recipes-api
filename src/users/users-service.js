@@ -18,6 +18,11 @@ const UsersService = {
             .select('*').from('family_recipes_recipes AS recipes')
             .where('recipes.userid', userId)
     },
+    getUserById(db, userId) {
+        return db
+            .select('fname', 'lname', 'email', 'picture', 'public_id').from('family_recipes_users')
+            .where('id', userId)
+    },
     getUserRole(db, userId) {
         return db
             .select('role').from('family_recipes_users')
@@ -30,7 +35,6 @@ const UsersService = {
             .then(user => !!user)
     },
     insertUser(db, newUser) {
-        console.log("test")
         return db
             .insert(newUser)
             .into('family_recipes_users')
@@ -42,10 +46,12 @@ const UsersService = {
             .from('family_recipes_users')
             .where({ id })
             .update(data)
+            .returning('*')
+            .then(([user]) => user)
     },
     validatePassword(password) {
         if (password.length < 8) {
-            return 'Password must be longer than 8 characters'
+            return 'Password must be at least 8 characters'
         }
         if (password.length > 72) {
             return 'Password must be less than 72 characters'
@@ -70,7 +76,6 @@ const UsersService = {
         }
     },
     hashPassword(password) {
-        console.log(password)
         return bcrypt.hash(password, 12)
     },
 }

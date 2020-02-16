@@ -37,6 +37,17 @@ const RecipesService = {
             .returning('*')
             .then(([recipe]) => recipe)
     },
+    deleteRecipe(db, id) {
+        return db
+            .from('family_recipes_recipes')
+            .where('id', id)
+            .delete()
+    },
+    getRecipePublicId(db, id) {
+        return db
+            .select('public_id').from('family_recipes_recipes')
+            .where('id', id)
+    },
     serializeRecipe(recipe) {
         return {
             id: recipe.id,

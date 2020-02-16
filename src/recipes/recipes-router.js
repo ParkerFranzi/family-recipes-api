@@ -6,7 +6,7 @@ const recipesRouter = express.Router()
 const jsonBodyParser = express.json()
 const multer = require('multer')
 const cloudinary = require('cloudinary').v2
-const { requireAuth } = require('../middleware/jwt-auth')
+const { requireAuth, requireSpecificUser } = require('../middleware/jwt-auth')
 const { uploader, cloudinaryConfig } = require('../../cloudinaryConfig')
 
 // upload file path
@@ -121,11 +121,10 @@ recipesRouter
 
 recipesRouter
     .route('/:recipeId')
-    .all(requireAuth)
+    .all(requireSpecificUser)
     .patch(upload.single('image'), jsonBodyParser, (req, res, next) => {
         const { dishname, description, ingredients, instructions, preptime, cooktime, userid, current_user, public_id } = req.body
         const oldImage = public_id
-        console.log(oldImage)
         let recipeToUpdate = {}
         let image = ''
         let pic_type = ''
@@ -214,4 +213,23 @@ recipesRouter
             })
             .catch(next)
     })
+
+recipesRouter
+    .route('/delete-recipe/:recipeId')
+    .all(requireSpecificUser)
+    .delete((req, res, next) => {
+        RecipesService.getRecipePublicId(req.app.get('db'), req.params.recipeId)
+        .then(pic => {
+            const public_id = pic[0].public_id
+            RecipesService.deleteRecipe(req.app.get('db'), req.params.recipeId)
+            .then(() => {
+                uploader.destroy(public_id)
+                res.send(204).end()
+            })
+            .catch(next)
+        })
+        .catch(next)
+
+    })
+
 module.exports = recipesRouter
