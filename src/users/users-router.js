@@ -107,15 +107,14 @@ usersRouter
                             return uploader.upload(picture)
                                 .then((result) => {
                                     if (result) 
-                                        newUser.picture = result.url
+                                        newUser.picture = result.secure_url
                                         newUser.public_id = result.public_id
-                                        console.log(newUser)
+                                        newUser.pic_type = result.format
                                         return UsersService.insertUser(
                                             req.app.get('db'),
                                             newUser
                                         )
                                     .then(user => {
-                                        console.log(user)
                                         res
                                             .status(201)
                                             .location(path.posix.join(req.originalUrl, `/${user.id}`))
@@ -199,8 +198,9 @@ usersRouter
                         if (userToUpdate.picture) {
                             uploader.upload(picture).then((result) => {
                                 if (result)
-                                    userToUpdate.picture = result.url
+                                    userToUpdate.picture = result.secure_url
                                     userToUpdate.public_id = result.public_id
+                                    userToUpdate.pic_type = result.format
                                     return UsersService.updateUser(
                                         req.app.get('db'),
                                         dbUser.id,

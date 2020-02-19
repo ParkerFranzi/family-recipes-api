@@ -6,7 +6,7 @@ const recipesRouter = express.Router()
 const jsonBodyParser = express.json()
 const multer = require('multer')
 const cloudinary = require('cloudinary').v2
-const { requireAuth, requireSpecificUser } = require('../middleware/jwt-auth')
+const { requireAuth, requireSpecificUser, requireRecipeUser } = require('../middleware/jwt-auth')
 const { uploader, cloudinaryConfig } = require('../../cloudinaryConfig')
 
 // upload file path
@@ -53,11 +53,7 @@ recipesRouter
     .all(requireAuth) 
     .post(upload.single('image'), jsonBodyParser, (req, res, next) => {
         const { dishname, description, ingredients, instructions, preptime, cooktime, userid } = req.body
-        let image = req.file.path
-        console.log(req.file)
-        const pic_type = req.file.mimetype
-        const pic_name = req.file.originalname
-        const public_id = ''
+
 
         for (const field of ['dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'userid']) {
             if (!req.body[field])
@@ -73,6 +69,11 @@ recipesRouter
             return res.status(400).json({
                 error: `Image size must be under 3MB`
             })
+        let image = req.file.path
+        console.log(req.file)
+        const pic_type = ''
+        const pic_name = req.file.originalname
+        const public_id = ''
         const newRecipe = {
             dishname,
             description,
@@ -88,9 +89,9 @@ recipesRouter
         }
         uploader.upload(image).then((result) => {
             if (result) 
-                newRecipe.image = result.url
+                newRecipe.image = result.secure_url
                 newRecipe.public_id = result.public_id
-                console.log(newRecipe)
+                newRecipe.pic_type = result.format
                 return RecipesService.insertRecipe(
                     req.app.get('db'),
                     newRecipe
@@ -121,7 +122,8 @@ recipesRouter
 
 recipesRouter
     .route('/:recipeId')
-    .all(requireSpecificUser)
+    .all(checkRecipeExists)
+    .all(requireRecipeUser)
     .patch(upload.single('image'), jsonBodyParser, (req, res, next) => {
         const { dishname, description, ingredients, instructions, preptime, cooktime, userid, current_user, public_id } = req.body
         const oldImage = public_id
@@ -166,8 +168,9 @@ recipesRouter
                 if (recipeToUpdate.image) {
                     uploader.upload(image).then((result) => {
                         if (result) 
-                            recipeToUpdate.image = result.url
+                            recipeToUpdate.image = result.secure_url
                             recipeToUpdate.public_id = result.public_id
+                            recipeToUpdate.pic_type = result.format
                             return RecipesService.updateRecipe(
                                 req.app.get('db'),
                                 req.params.recipeId,
@@ -205,7 +208,8 @@ recipesRouter
 
 recipesRouter
     .route('/edit-recipe/:recipeId')
-    .all(requireAuth)
+    .all(checkRecipeExists)
+    .all(requireRecipeUser)
     .get((req, res, next) => {
         RecipesService.getRecipeById(req.app.get('db'), req.params.recipeId)
             .then(recipe => {
@@ -216,7 +220,8 @@ recipesRouter
 
 recipesRouter
     .route('/delete-recipe/:recipeId')
-    .all(requireSpecificUser)
+    .all(checkRecipeExists)
+    .all(requireRecipeUser)
     .delete((req, res, next) => {
         RecipesService.getRecipePublicId(req.app.get('db'), req.params.recipeId)
         .then(pic => {
@@ -231,5 +236,23 @@ recipesRouter
         .catch(next)
 
     })
+
+async function checkRecipeExists(req, res, next) {
+    try {
+        const recipe = await RecipesService.getRecipeById(
+        req.app.get('db'),
+        req.params.recipeId
+        )
+        if (!recipe[0])
+        return res.status(404).json({
+            error: `Recipe doesn't exist`
+        })
+    
+        res.recipe = recipe
+        next()
+    } catch (error) {
+        next(error)
+    }
+}
 
 module.exports = recipesRouter

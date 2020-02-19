@@ -5,16 +5,14 @@ TRUNCATE
   family_recipes_users
   RESTART IDENTITY CASCADE;
 
-INSERT INTO family_recipes_users (fName, lName, email, picture, role, password)
+INSERT INTO family_recipes_users (fName, lName, email, picture, role, password, pic_type, public_id)
 VALUES
-    ('Parker', 'Franzi', 'parker.franzi@gmail.com', 'uploads\brian-min.png', 3, 'qwerty'),
-    ('Lucky','Franzi','lucky.franzi@gmail.com','uploads\brian-min.png', 2, 'asdfg'),
-    ('Diane','Franzi','diane.franzi@gmail.com','uploads\brian-min.png', 2, 'zxcvb');
+    ('Parker', 'Franzi', 'parker.franzi@gmail.com', 'https://res.cloudinary.com/djvgcsmhq/image/upload/v1582076493/profile-with-lucky_yvbtuf.png', 3, '$2a$12$Og.1SPYdsB2kxg1xSZlI2OGbCvWT6u/rdVfXDnCk/XNGyJ5tSrxfa', 'png', 'profile-with-lucky_yvbtuf' );
 
-INSERT INTO family_recipes_recipes (userId, dishName, description, ingredients, instructions, image, prepTime, cookTime)
+INSERT INTO family_recipes_recipes (userId, dishName, description, ingredients, instructions, image, prepTime, cookTime, pic_type, public_id)
 VALUES
     (
-        2,
+        1,
         'Sous Vide Steak',
         'Transform your steak by making sure it is perfectly cooked using sous vide',
         '{
@@ -40,12 +38,14 @@ VALUES
             ]
 
         }',
-        'https://www.parkerfranzi.com/wp-content/uploads/2020/01/sous-vide-steak-scaled.jpg',
+        'https://res.cloudinary.com/djvgcsmhq/image/upload/v1582076575/sous-vide-steak_i5ueat.jpg',
         '5-15 min',
-        '1-4 hrs'
+        '1-4 hrs',
+        'jpg',
+        'sous-vide-steak_i5ueat'
     ),
     (
-        2,
+        1,
         'Sous Vide Ribs',
         'Tender juicy fall off the bone ribs without having to sit by a smoker all day',
         '{
@@ -69,9 +69,11 @@ VALUES
             ]
 
         }',
-        'https://www.parkerfranzi.com/wp-content/uploads/2020/01/sous-vide-ribs-scaled.jpg',
+        'https://res.cloudinary.com/djvgcsmhq/image/upload/v1582076594/sous-vide-ribs_dyoax9.jpg',
         '5-15 min',
-        '18-48 hrs'
+        '18-48 hrs',
+        'jpg',
+        'sous-vide-ribs_dyoax9'
     ),
     (
         1,
@@ -105,12 +107,14 @@ VALUES
             ]
 
         }',
-        'https://www.parkerfranzi.com/wp-content/uploads/2020/01/spicy-peanut-chicken-scaled.jpg',
+        'https://res.cloudinary.com/djvgcsmhq/image/upload/v1582076591/spicy-peanut-chicken_dahiuf.jpg',
         '15-30 min',
-        '30-45 min'
+        '30-45 min',
+        'jpg',
+        'spicy-peanut-chicken_dahiuf'
     ),
     (
-        3,
+        1,
         'Sous Vide Pork Shoulder',
         'Easy Pulled Pork Sous Vide',
         '{
@@ -134,9 +138,11 @@ VALUES
             ]
 
         }',
-        'https://www.parkerfranzi.com/wp-content/uploads/2020/01/sous-vide-pulled-pork-scaled.jpg',
+        'https://res.cloudinary.com/djvgcsmhq/image/upload/v1582076613/sous-vide-pulled_pork_avj68m.jpg',
         '5-15 min',
-        '18-48 hrs'
+        '18-48 hrs',
+        'jpg',
+        'sous-vide-pulled_pork_avj68m'
     );
 
 COMMIT;

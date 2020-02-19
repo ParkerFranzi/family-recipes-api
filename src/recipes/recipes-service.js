@@ -12,7 +12,7 @@ const RecipesService = {
     },
     getRecipeById(db, recipeId) {
         return db
-            .select('userid', 'dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'image', 'pic_type', 'pic_name', 'public_id').from('family_recipes_recipes AS recipes')
+            .select('id', 'userid', 'dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'image', 'pic_type', 'pic_name', 'public_id').from('family_recipes_recipes AS recipes')
             .where('recipes.id', recipeId)
     },
     getRecipeImage(db, imgName) {
@@ -21,8 +21,12 @@ const RecipesService = {
             .where('pic_name', imgName)
 
     },
+    getRecipeByUser(db, userId) {
+        return db
+            .select('*').from('family_recipes_recipes')
+            .where('userid', userId)
+    },
     insertRecipe(db, newRecipe) {
-        console.log(newRecipe)
         return db
             .insert(newRecipe)
             .into('family_recipes_recipes')
