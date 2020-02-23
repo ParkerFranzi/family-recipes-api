@@ -132,7 +132,6 @@ usersRouter
     .all(requireSpecificUser)
 
     .patch(upload.single('picture'), jsonBodyParser, (req, res, next) => {
-        console.log(1)
         const { password, fname, lname, email, public_id, new_password, new_password_confirm } = req.body
 
 
@@ -155,7 +154,6 @@ usersRouter
                 })
             }
         }
-        console.log(2)
         if (new_password.length > 0) {
             const passwordError = UsersService.validatePassword(new_password)
             if (passwordError) 
@@ -170,7 +168,6 @@ usersRouter
                     userToUpdate.password = hashedPassword
                 })
         }
-        console.log(userToUpdate)
         const numberOfValues = Object.values(userToUpdate).filter(Boolean).length
         if (numberOfValues === 0) {
             return res.status(400).json({
@@ -180,10 +177,8 @@ usersRouter
                 
             })
         }
-        console.log(3)
         AuthService.getUserWithEmail(req.app.get('db'), email)
             .then(dbUser => {
-                console.log("test")
                 if (!dbUser)
                     return res.status(400).json({
                         error: `Incorrect password`

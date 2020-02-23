@@ -53,8 +53,6 @@ recipesRouter
     .all(requireAuth) 
     .post(upload.single('image'), jsonBodyParser, (req, res, next) => {
         const { dishname, description, ingredients, instructions, preptime, cooktime, userid } = req.body
-
-
         for (const field of ['dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'userid']) {
             if (!req.body[field])
                 return res.status(400).json({
@@ -87,8 +85,12 @@ recipesRouter
             pic_type,
             pic_name
         }
+        
+        console.log(image, "test")
         uploader.upload(image).then((result) => {
+            console.log(result)
             if (result) 
+                
                 newRecipe.image = result.secure_url
                 newRecipe.public_id = result.public_id
                 newRecipe.pic_type = result.format
@@ -97,6 +99,7 @@ recipesRouter
                     newRecipe
                 )
                     .then(recipe => {
+                        console.log("test")
                         res
                             .status(201)
                             .location(path.posix.join(req.originalUrl, `/${recipe.id}`))
@@ -111,15 +114,6 @@ recipesRouter
         })
     })
     
-
-
-recipesRouter
-    .route('/:recipeId')
-    .get((req, res, next) => {
-        console.log(req.params.id)
-        res.send('test')
-    })
-
 recipesRouter
     .route('/:recipeId')
     .all(checkRecipeExists)
@@ -229,7 +223,7 @@ recipesRouter
             RecipesService.deleteRecipe(req.app.get('db'), req.params.recipeId)
             .then(() => {
                 uploader.destroy(public_id)
-                res.send(204).end()
+                res.sendStatus(204).end()
             })
             .catch(next)
         })

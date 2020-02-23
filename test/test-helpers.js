@@ -34,14 +34,50 @@ function makeUsersArray() {
             email: 'test@test3.com',
             password: 'password',
             picture: 'http://www.fakeimg.com/fake3.jpg',
-            public_id: 'fake',
+            public_id: 'fake3',
             role: 3,
             pic_type: 'image/jpg',
             pic_name: 'fake3.jpg',
         },
     ]
 }
-
+function makeExpectedUsersArray() {
+    return [
+        {
+            id: 1,
+            fname: 'test-user-fname-1',
+            lname: 'test-user-lname-1',
+            email: 'test@test1.com',
+            picture: 'http://www.fakeimg.com/fake.jpg',
+            public_id: 'fake',
+            role: 3,
+            pic_type: 'image/jpg',
+            pic_name: 'fake.jpg',
+        },
+        {
+            id: 2,
+            fname: 'test-user-fname-2',
+            lname: 'test-user-lname-2',
+            email: 'test@test2.com',
+            picture: 'http://www.fakeimg.com/fake2.jpg',
+            public_id: 'fake2',
+            role: 1,
+            pic_type: 'image/jpg',
+            pic_name: 'fake2.jpg',
+        },
+        {
+            id: 3,
+            fname: 'test-user-fname-3',
+            lname: 'test-user-lname-3',
+            email: 'test@test3.com',
+            picture: 'http://www.fakeimg.com/fake3.jpg',
+            public_id: 'fake3',
+            role: 3,
+            pic_type: 'image/jpg',
+            pic_name: 'fake3.jpg',
+        },
+    ]
+}
 function makeRecipesArray() {
     return [
         {
@@ -200,14 +236,16 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
     })
     return `Bearer ${token}`
 }
+
  
 module.exports = {
     makeUsersArray,
     makeRecipesArray,
+    makeExpectedUsersArray,
     makeRecipesFixtures,
     // makeExpectedRecipe,
     cleanTables,
     seedRecipesTables,
     seedUsers,
-    makeAuthHeader
+    makeAuthHeader,
 }

@@ -4,14 +4,13 @@ const helpers = require('./test-helpers')
 const fs = require('fs')
 
 
-describe('Recipes Endpoints', function() {
+describe('Recipes Endpoints', () => {
   let db
 
   const {
     testUsers,
     testRecipes,
   } = helpers.makeRecipesFixtures()
-  console.log(testRecipes)
   before('make knex instance', () => {
     db = knex({
       client: 'pg',
@@ -107,58 +106,353 @@ describe('Recipes Endpoints', function() {
         })
       })
   })
-//   describe(`POST /api/recipes/`, () => {
-//       context(`Adding a new recipe`, () => {
-//         beforeEach('insert users/recipes', () => 
-//         helpers.seedRecipesTables(
-//             db,
-//             testUsers,
-//             testRecipes,
-//         )
-//       )
-//       it(`creates a recipe, responding with 201 and the new recipe`, function() {
-//         this.retries(3)
-//         const testUser = testUsers[0]
-//         const newRecipe = {
-//           userid: 1,
-//           dishname: 'test-dishname',
-//           description: 'testing test test test test',
-//           ingredients: {
-//               "ingredientList": [
-//                   "Test 1", 
-//                   "Test 2",
-//                   "Test 3",
-//                   "Test 4",
-//                   "Test 5" 
-//               ]
-//           },
-//           instructions: {
-//               "instructionList": [
-//                   "Test 1", 
-//                   "Test 2",
-//                   "Test 3",
-//                   "Test 4",
-//                   "Test 5" 
-//               ]
-//           },
-//           image: fs.readFileSync('./uploads/test.png'),
-//           public_id: 'fake',
-//           pic_type: 'image/jpg',
-//           pic_name: 'fake.jpg',
-//           preptime: 'test-test',
-//           cooktime: 'test-test',
-//         }
-//         console.log(newRecipe.image)
-//         return supertest(app)
-//           .post('/api/recipes')
-//           .set('Authorization', helpers.makeAuthHeader(testUser))
-//           .send(newRecipe)
-//           .expect(201)
+  describe(`POST /api/recipes/`, () => {
+      context(`Adding a new recipe`, () => {
+        beforeEach('insert users/recipes', () => 
+        helpers.seedRecipesTables(
+            db,
+            testUsers,
+            testRecipes,
+        )
+      )
+      it(`creates a recipe, responding with 201 and the new recipe`, () => {
+        const testUser = testUsers[0]
+        const newRecipe = {
+          userid: 1,
+          dishname: 'test-dishname',
+          description: 'testing test test test test',
+          ingredients: {
+              "ingredientList": [
+                  "Test 1", 
+                  "Test 2",
+                  "Test 3",
+                  "Test 4",
+                  "Test 5" 
+              ]
+          },
+          instructions: {
+              "instructionList": [
+                  "Test 1", 
+                  "Test 2",
+                  "Test 3",
+                  "Test 4",
+                  "Test 5" 
+              ]
+          },
+          public_id: 'fake',
+          pic_type: 'image/jpg',
+          pic_name: 'fake.jpg',
+          preptime: 'test-test',
+          cooktime: 'test-test',
+        }
+        async () => {
+            const response = await chai.request(app)
+        
+            .post('/api/recipes')
+            .set('Authorization', helpers.makeAuthHeader(testUser))
+            .field('Content-type', 'multipart/form-data')
+            .field('dishname', newRecipe.dishname)
+            .field('userid', newRecipe.userid)
+            .field('description', newRecipe.description)
+            .field('preptime', newRecipe.preptime)
+            .field('cooktime', newRecipe.cooktime)
+            .field('ingredients', JSON.stringify(newRecipe.ingredients))
+            .field('instructions', JSON.stringify(newRecipe.instructions))
+            .attach('image', './uploads/test.png')
+            .expect(response.body.status).to.eql(201)
+            .expect(response.body.data).to.have.property('id')
+            .expect(response.body.data.dishname).to.eql(newRecipe.dishname)
+            .expect(response.body.data.description).to.eql(newRecipe.description)
+            .expect(response.body.data.ingredients).to.eql(newRecipe.ingredients)
+            .expect(response.body.data.instructions).to.eql(newRecipe.instructions)
+            .expect(response.body.data.preptime).to.eql(newRecipe.preptime)
+            .expect(response.body.data.cooktime).to.eql(newRecipe.cooktime)
+            .expect(response.body.data.userid).to.eql(newRecipe.userid)
+            .expect(response.body.data).to.have.property('image')
+            .expect(response.body.data).to.have.property('pic_type')
+            .expect(response.body.data).to.have.property('pic_name')
+            .expect(response.body.data).to.have.property('public_id')
 
-//     })
-//       })
-      
-      
-//   })
+        }
+      })
+      it(`trying to add a recipe that has no image`, () => {
+        const testUser = testUsers[0]
+        const newRecipe = {
+          userid: 1,
+          dishname: 'test-dishname',
+          description: 'testing test test test test',
+          ingredients: {
+              "ingredientList": [
+                  "Test 1", 
+                  "Test 2",
+                  "Test 3",
+                  "Test 4",
+                  "Test 5" 
+              ]
+          },
+          instructions: {
+              "instructionList": [
+                  "Test 1", 
+                  "Test 2",
+                  "Test 3",
+                  "Test 4",
+                  "Test 5" 
+              ]
+          },
+          public_id: 'fake',
+          pic_type: 'image/jpg',
+          pic_name: 'fake.jpg',
+          preptime: 'test-test',
+          cooktime: 'test-test',
+        }
+        async () => {
+            const response = await chai.request(app)
+        
+            .post('/api/recipes')
+            .set('Authorization', helpers.makeAuthHeader(testUser))
+            .field('Content-type', 'multipart/form-data')
+            .field('dishname', newRecipe.dishname)
+            .field('userid', newRecipe.userid)
+            .field('description', newRecipe.description)
+            .field('preptime', newRecipe.preptime)
+            .field('cooktime', newRecipe.cooktime)
+            .field('ingredients', JSON.stringify(newRecipe.ingredients))
+            .field('instructions', JSON.stringify(newRecipe.instructions))
+            .expect(response.body.status).to.eql(400)
+            .expect(response.body.data.error).to.eql(`Missing image in request body`)
 
+        }  
+      })
+      it(`trying to add a recipe while not being logged in`, () => {
+        const testUser = testUsers[0]
+        const newRecipe = {
+          userid: 1,
+          dishname: 'test-dishname',
+          description: 'testing test test test test',
+          ingredients: {
+              "ingredientList": [
+                  "Test 1", 
+                  "Test 2",
+                  "Test 3",
+                  "Test 4",
+                  "Test 5" 
+              ]
+          },
+          instructions: {
+              "instructionList": [
+                  "Test 1", 
+                  "Test 2",
+                  "Test 3",
+                  "Test 4",
+                  "Test 5" 
+              ]
+          },
+          public_id: 'fake',
+          pic_type: 'image/jpg',
+          pic_name: 'fake.jpg',
+          preptime: 'test-test',
+          cooktime: 'test-test',
+        }
+        async () => {
+            const response = await chai.request(app)
+        
+            .post('/api/recipes')
+            .field('Content-type', 'multipart/form-data')
+            .field('dishname', newRecipe.dishname)
+            .field('userid', newRecipe.userid)
+            .field('description', newRecipe.description)
+            .field('preptime', newRecipe.preptime)
+            .field('cooktime', newRecipe.cooktime)
+            .field('ingredients', JSON.stringify(newRecipe.ingredients))
+            .field('instructions', JSON.stringify(newRecipe.instructions))
+            .attach('image', './uploads/test.png')
+            .expect(response.body.status).to.eql(401)
+            .expect(response.body.data.error).to.eql('Unauthorized request')
+
+
+        }
+      })
+    })
+      
+  })
+
+  describe(`PATCH /api/recipes/:recipeId`, () => {
+    context(`Editing a recipe`, () => {
+      beforeEach('insert users/recipes', () => 
+      helpers.seedRecipesTables(
+          db,
+          testUsers,
+          testRecipes,
+      )
+    )
+    it(`edits a recipe, responding with 201 and the new recipe, cooktime not added`, function() {
+      const testUser = testUsers[0]
+      const oldRecipe = testRecipes[0]
+      const newRecipe = {
+        userid: 2,
+        dishname: 'steak test',
+        description: 'steak testing test test test test',
+        ingredients: {
+            "ingredientList": [
+                "Steak", 
+                "Test 2",
+                "Test 3",
+                "Test 4",
+                "Test 5" 
+            ]
+        },
+        instructions: {
+            "instructionList": [
+                "Sear", 
+                "Test 2",
+                "Test 3",
+                "Test 4",
+                "Test 5" 
+            ]
+        },
+        public_id: 'steak-fake',
+        pic_type: 'image/jpg',
+        pic_name: 'steak-fake.jpg',
+        preptime: 'steak-test',
+      }
+      async () => {
+          const response = await chai.request(app)
+      
+          .patch(`/api/recipes/${oldRecipe.id}`)
+          .set('Authorization', helpers.makeAuthHeader(testUser))
+          .field('Content-type', 'multipart/form-data')
+          .field('dishname', newRecipe.dishname)
+          .field('userid', newRecipe.userid)
+          .field('description', newRecipe.description)
+          .field('preptime', newRecipe.preptime)
+          .field('ingredients', JSON.stringify(newRecipe.ingredients))
+          .field('instructions', JSON.stringify(newRecipe.instructions))
+          .attach('image', './uploads/test.png')
+          .expect(response.body.status).to.eql(201)
+          .expect(response.body.data).to.have.property('id')
+          .expect(response.body.data.dishname).to.eql(newRecipe.dishname)
+          .expect(response.body.data.description).to.eql(newRecipe.description)
+          .expect(response.body.data.ingredients).to.eql(newRecipe.ingredients)
+          .expect(response.body.data.instructions).to.eql(newRecipe.instructions)
+          .expect(response.body.data.preptime).to.eql(newRecipe.preptime)
+          .expect(response.body.data.cooktime).to.eql(oldRecipe.cooktime)
+          .expect(response.body.data.userid).to.eql(newRecipe.userid)
+          .expect(response.body.data).to.have.property('image')
+          .expect(response.body.data).to.have.property('pic_type')
+          .expect(response.body.data).to.have.property('pic_name')
+          .expect(response.body.data).to.have.property('public_id')
+
+      }
+    })
+    it(`trying to edit a recipe when not a admin or creator`, function() {
+        const testUser = testUsers[1]
+        const oldRecipe = testRecipes[0]
+        const newRecipe = {
+          userid: 1,
+          dishname: 'steak test',
+          description: 'steak testing test test test test',
+          ingredients: {
+              "ingredientList": [
+                  "Steak", 
+                  "Test 2",
+                  "Test 3",
+                  "Test 4",
+                  "Test 5" 
+              ]
+          },
+          instructions: {
+              "instructionList": [
+                  "Sear", 
+                  "Test 2",
+                  "Test 3",
+                  "Test 4",
+                  "Test 5" 
+              ]
+          },
+          public_id: 'steak-fake',
+          pic_type: 'image/jpg',
+          pic_name: 'steak-fake.jpg',
+          preptime: 'steak-test',
+        }
+        async () => {
+            const response = await chai.request(app)
+        
+            .patch(`/api/recipes/${oldRecipe.id}`)
+            .set('Authorization', helpers.makeAuthHeader(testUser))
+            .field('Content-type', 'multipart/form-data')
+            .field('dishname', newRecipe.dishname)
+            .field('userid', newRecipe.userid)
+            .field('description', newRecipe.description)
+            .field('preptime', newRecipe.preptime)
+            .field('ingredients', JSON.stringify(newRecipe.ingredients))
+            .field('instructions', JSON.stringify(newRecipe.instructions))
+            .attach('image', './uploads/test.png')
+            .expect(response.body.status).to.eql(401)
+            .expect(response.body.data.error).to.eql('Unauthorized request')
+        }
+    })
+    it(`trying to add malicious code`, function() {
+        const testUser = testUsers[0]
+        const oldRecipe = testRecipes[0]
+        const expectedResponse = 'Naughty naughty very naughty &lt;script&gt;alert(\"xss\");&lt;/script&gt;'
+        const newRecipe = {
+          userid: 1,
+          dishname: 'Naughty naughty very naughty <script>alert("xss");</script>',
+          description: 'Naughty naughty very naughty <script>alert("xss");</script>',
+          ingredients: {
+              "ingredientList": [
+                    'Naughty naughty very naughty <script>alert("xss");</script>', 
+                    "Test 2",
+                    "Test 3",
+                    "Test 4",
+                    "Test 5" 
+              ]
+          },
+          instructions: {
+              "instructionList": [
+                    'Naughty naughty very naughty <script>alert("xss");</script>', 
+                    "Test 2",
+                    "Test 3",
+                    "Test 4",
+                    "Test 5" 
+              ]
+          },
+          public_id: 'steak-fake',
+          pic_type: 'image/jpg',
+          pic_name: 'Naughty naughty very naughty <script>alert("xss");</script>',
+          preptime: 'Naughty naughty very naughty <script>alert("xss");</script>',
+          cooktime: 'Naughty naughty very naughty <script>alert("xss");</script>',
+        }
+        async () => {
+            const response = await chai.request(app)
+        
+            .patch(`/api/recipes/${oldRecipe.id}`)
+            .set('Authorization', helpers.makeAuthHeader(testUser))
+            .field('Content-type', 'multipart/form-data')
+            .field('dishname', newRecipe.dishname)
+            .field('userid', newRecipe.userid)
+            .field('description', newRecipe.description)
+            .field('preptime', newRecipe.preptime)
+            .field('ingredients', JSON.stringify(newRecipe.ingredients))
+            .field('instructions', JSON.stringify(newRecipe.instructions))
+            .attach('image', './uploads/test.png')
+            .expect(response.body.status).to.eql(201)
+            .expect(response.body.data.id).to.eql(oldRecipe.id)
+            .expect(response.body.data.dishname).to.eql(expectedResponse)
+            .expect(response.body.data.description).to.eql(expectedResponse)
+            .expect(response.body.data.ingredients.ingredientList[0]).to.eql(expectedResponse)
+            .expect(response.body.data.instructions.instructionList[0]).to.eql(expectedResponse)
+            .expect(response.body.data.preptime).to.eql(expectedResponse)
+            .expect(response.body.data.cooktime).to.eql(expectedResponse)
+            .expect(response.body.data.userid).to.eql(1)
+            .expect(response.body.data).to.have.property('image')
+            .expect(response.body.data).to.have.property('pic_type')
+            .expect(response.body.data).to.have.property('pic_name')
+            .expect(response.body.data).to.have.property('public_id')
+            
+        }
+    })
+  })
+    
+})
 })

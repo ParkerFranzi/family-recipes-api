@@ -70,9 +70,10 @@ const UsersService = {
             fname: xss(user.fname),
             lname: xss(user.lname),
             email: xss(user.email),
-            picture: user.picture,
+            picture: xss(user.picture),
             pic_type: xss(user.pic_type),
-            pic_name: xss(user.pic_name)
+            pic_name: xss(user.pic_name),
+            password: xss(user.password),
         }
     },
     hashPassword(password) {
