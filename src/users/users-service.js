@@ -73,7 +73,7 @@ const UsersService = {
             picture: xss(user.picture),
             pic_type: xss(user.pic_type),
             pic_name: xss(user.pic_name),
-            password: xss(user.password),
+            public_id: xss(user.public_id)
         }
     },
     hashPassword(password) {

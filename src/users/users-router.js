@@ -64,7 +64,6 @@ usersRouter
         const pic_name = req.file.originalname
         const public_id = ''
 
-        console.log(req.file)
         for (const field of ['fname', 'lname', 'email', 'password']) {
             if (!req.body[field])
                 return res.status(400).json({
@@ -185,7 +184,6 @@ usersRouter
                     })
                 AuthService.comparePasswords(password, dbUser.password)
                     .then(compareMatch => {
-                        console.log("test 2")
                         if (!compareMatch)
                             return res.status(400).json({
                                 error: `Incorrect password`
@@ -203,7 +201,6 @@ usersRouter
                                     )
                                         .then(user => {
                                             uploader.destroy(oldPicture)
-                                            console.log(user)
                                             res
                                                 .status(201)
                                                 .json(UsersService.serializeUser(user))
@@ -217,7 +214,6 @@ usersRouter
                         else {
                             return UsersService.updateUser(req.app.get('db'), dbUser.id, userToUpdate)
                                 .then(user => {
-                                    console.log(user)
                                     res
                                         .status(201)
                                         .json(UsersService.serializeUser(user))

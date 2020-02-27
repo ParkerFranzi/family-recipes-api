@@ -68,7 +68,6 @@ recipesRouter
                 error: `Image size must be under 3MB`
             })
         let image = req.file.path
-        console.log(req.file)
         const pic_type = ''
         const pic_name = req.file.originalname
         const public_id = ''
@@ -86,9 +85,8 @@ recipesRouter
             pic_name
         }
         
-        console.log(image, "test")
+ 
         uploader.upload(image).then((result) => {
-            console.log(result)
             if (result) 
                 
                 newRecipe.image = result.secure_url
@@ -99,7 +97,6 @@ recipesRouter
                     newRecipe
                 )
                     .then(recipe => {
-                        console.log("test")
                         res
                             .status(201)
                             .location(path.posix.join(req.originalUrl, `/${recipe.id}`))
@@ -158,7 +155,7 @@ recipesRouter
                         
                     })
                 }
-                console.log(recipeToUpdate)
+
                 if (recipeToUpdate.image) {
                     uploader.upload(image).then((result) => {
                         if (result) 
@@ -189,7 +186,6 @@ recipesRouter
                 else {
                     return RecipesService.updateRecipe(req.app.get('db'), req.params.recipeId, recipeToUpdate)
                         .then(recipe => {
-                            console.log(recipe)
                             res
                                 .status(201)                    
                                 .json(RecipesService.serializeRecipe(recipe))
