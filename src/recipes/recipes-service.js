@@ -61,7 +61,7 @@ const RecipesService = {
             instructions: xss(recipe.instructions),
             preptime: xss(recipe.preptime),
             cooktime: xss(recipe.cooktime),
-            userid: xss(recipe.userid),
+            userid: Number(xss(recipe.userid)),
             image: xss(recipe.image),
             pic_type: xss(recipe.pic_type),
             pic_name: xss(recipe.pic_name),
