@@ -3,16 +3,16 @@ const xss = require('xss')
 const RecipesService = {
     getAllRecipes(db) {
         return db
-            .select('id', 'userid', 'dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'image', 'pic_type', 'pic_name', 'public_id').from('family_recipes_recipes')
+            .select('id', 'userid', 'dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'servings', 'image', 'pic_type', 'pic_name', 'public_id').from('family_recipes_recipes')
     },
     getUsersRecipes(db, userId) {
         return db
-            .select('id', 'userid', 'dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'image', 'pic_type', 'pic_name', 'public_id').from('family_recipes_recipes AS recipes')
+            .select('id', 'userid', 'dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'servings', 'image', 'pic_type', 'pic_name', 'public_id').from('family_recipes_recipes AS recipes')
             .where('recipes.userid', userId)
     },
     getRecipeById(db, recipeId) {
         return db
-            .select('id', 'userid', 'dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'image', 'pic_type', 'pic_name', 'public_id').from('family_recipes_recipes AS recipes')
+            .select('id', 'userid', 'dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'servings', 'image', 'pic_type', 'pic_name', 'public_id').from('family_recipes_recipes AS recipes')
             .where('recipes.id', recipeId)
     },
     getRecipeImage(db, imgName) {
@@ -61,6 +61,7 @@ const RecipesService = {
             instructions: xss(recipe.instructions),
             preptime: xss(recipe.preptime),
             cooktime: xss(recipe.cooktime),
+            servings: xss(recipe.servings),
             userid: Number(xss(recipe.userid)),
             image: xss(recipe.image),
             pic_type: xss(recipe.pic_type),

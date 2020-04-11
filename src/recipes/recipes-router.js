@@ -52,8 +52,8 @@ recipesRouter
     .route('/')
     .all(requireAuth) 
     .post(upload.single('image'), jsonBodyParser, (req, res, next) => {
-        const { dishname, description, ingredients, instructions, preptime, cooktime, userid } = req.body
-        for (const field of ['dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'userid']) {
+        const { dishname, description, ingredients, instructions, preptime, cooktime, userid, servings } = req.body
+        for (const field of ['dishname', 'description', 'ingredients', 'instructions', 'preptime', 'cooktime', 'userid', 'servings']) {
             if (!req.body[field])
                 return res.status(400).json({
                     error: `Missing '${field}' in request body`
@@ -78,6 +78,7 @@ recipesRouter
             instructions,
             preptime,
             cooktime,
+            servings,
             userid,
             image,
             public_id,
@@ -116,20 +117,20 @@ recipesRouter
     .all(checkRecipeExists)
     .all(requireRecipeUser)
     .patch(upload.single('image'), jsonBodyParser, (req, res, next) => {
-        const { dishname, description, ingredients, instructions, preptime, cooktime, userid, current_user, public_id } = req.body
+        const { dishname, description, ingredients, instructions, preptime, cooktime, userid, current_user, public_id, servings } = req.body
         const oldImage = public_id
         let recipeToUpdate = {}
         let image = ''
         let pic_type = ''
         let pic_name = ''
         if (req.file === undefined) {
-            recipeToUpdate = { dishname, description, ingredients, instructions, preptime, cooktime}
+            recipeToUpdate = { dishname, description, ingredients, instructions, preptime, cooktime, servings}
         } 
         else {
             image = req.file.path,
             pic_type = req.file.mimetype,
             pic_name = req.file.originalname
-            recipeToUpdate = { dishname, description, ingredients, instructions, preptime, cooktime, image, pic_type, pic_name, public_id}
+            recipeToUpdate = { dishname, description, ingredients, instructions, preptime, cooktime, servings, image, pic_type, pic_name, public_id}
             if (req.file.size > 3145728) {
                 return res.status(400).json({
                     error: `Image size must be under 3MB`
@@ -141,7 +142,7 @@ recipesRouter
         if (numberOfValues === 0) {
             return res.status(400).json({
                 error: {
-                    message: `Request body must contain either 'dishname', 'description', ingredients', instructions', 'preptime', 'cooktime', or 'image'`
+                    message: `Request body must contain either 'dishname', 'description', ingredients', instructions', 'preptime', 'cooktime', 'servings', or 'image'`
                 }
                 
             })
@@ -149,7 +150,7 @@ recipesRouter
 
         return UsersService.getUserRole(req.app.get('db'), Number(current_user))
             .then(userRole => {
-                if (userRole[0].role !== 1 && current_user !== userid) {
+                if (userRole[0].role !== 3 && current_user !== userid) {
                     return res.status(400).json({
                         error: `Must be recipe creator or admin`
                         

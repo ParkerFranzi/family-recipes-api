@@ -109,6 +109,7 @@ function makeRecipesArray() {
             pic_name: 'fake.jpg',
             preptime: 'test-test',
             cooktime: 'test-test',
+            servings: 'test-test',
         },
         {
             id: 2,
@@ -139,6 +140,7 @@ function makeRecipesArray() {
             pic_name: 'fake.jpg',
             preptime: 'test-test',
             cooktime: 'test-test',
+            servings: 'test-test',
         },
         {
             id: 3,
@@ -169,6 +171,7 @@ function makeRecipesArray() {
             pic_name: 'fake.jpg',
             preptime: 'test-test',
             cooktime: 'test-test',
+            servings: 'test-test',
         },
     ]
 }

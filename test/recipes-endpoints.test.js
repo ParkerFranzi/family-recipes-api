@@ -144,6 +144,7 @@ describe('Recipes Endpoints', () => {
           pic_name: 'fake.jpg',
           preptime: 'test-test',
           cooktime: 'test-test',
+          servings: 'test-test',
         }
         async () => {
             const response = await chai.request(app)
@@ -156,6 +157,7 @@ describe('Recipes Endpoints', () => {
             .field('description', newRecipe.description)
             .field('preptime', newRecipe.preptime)
             .field('cooktime', newRecipe.cooktime)
+            .field('servings', newRecipe.servings)
             .field('ingredients', JSON.stringify(newRecipe.ingredients))
             .field('instructions', JSON.stringify(newRecipe.instructions))
             .attach('image', './uploads/test.png')
@@ -167,6 +169,7 @@ describe('Recipes Endpoints', () => {
             .expect(response.body.data.instructions).to.eql(newRecipe.instructions)
             .expect(response.body.data.preptime).to.eql(newRecipe.preptime)
             .expect(response.body.data.cooktime).to.eql(newRecipe.cooktime)
+            .expect(response.body.data.servings).to.eql(newRecipe.servings)
             .expect(response.body.data.userid).to.eql(newRecipe.userid)
             .expect(response.body.data).to.have.property('image')
             .expect(response.body.data).to.have.property('pic_type')
@@ -204,6 +207,7 @@ describe('Recipes Endpoints', () => {
           pic_name: 'fake.jpg',
           preptime: 'test-test',
           cooktime: 'test-test',
+          servings: 'test-test',
         }
         async () => {
             const response = await chai.request(app)
@@ -216,6 +220,7 @@ describe('Recipes Endpoints', () => {
             .field('description', newRecipe.description)
             .field('preptime', newRecipe.preptime)
             .field('cooktime', newRecipe.cooktime)
+            .field('servings', newRecipe.servings)
             .field('ingredients', JSON.stringify(newRecipe.ingredients))
             .field('instructions', JSON.stringify(newRecipe.instructions))
             .expect(response.body.status).to.eql(400)
@@ -252,6 +257,7 @@ describe('Recipes Endpoints', () => {
           pic_name: 'fake.jpg',
           preptime: 'test-test',
           cooktime: 'test-test',
+          servings: 'test-test',
         }
         async () => {
             const response = await chai.request(app)
@@ -263,6 +269,7 @@ describe('Recipes Endpoints', () => {
             .field('description', newRecipe.description)
             .field('preptime', newRecipe.preptime)
             .field('cooktime', newRecipe.cooktime)
+            .field('servings', newRecipe.servings)
             .field('ingredients', JSON.stringify(newRecipe.ingredients))
             .field('instructions', JSON.stringify(newRecipe.instructions))
             .attach('image', './uploads/test.png')
@@ -314,6 +321,7 @@ describe('Recipes Endpoints', () => {
         pic_type: 'image/jpg',
         pic_name: 'steak-fake.jpg',
         preptime: 'steak-test',
+        servings: 'steak-test'
       }
       async () => {
           const response = await chai.request(app)
@@ -325,6 +333,7 @@ describe('Recipes Endpoints', () => {
           .field('userid', newRecipe.userid)
           .field('description', newRecipe.description)
           .field('preptime', newRecipe.preptime)
+          .field('servings', newRecipe.servings)
           .field('ingredients', JSON.stringify(newRecipe.ingredients))
           .field('instructions', JSON.stringify(newRecipe.instructions))
           .attach('image', './uploads/test.png')
@@ -336,6 +345,7 @@ describe('Recipes Endpoints', () => {
           .expect(response.body.data.instructions).to.eql(newRecipe.instructions)
           .expect(response.body.data.preptime).to.eql(newRecipe.preptime)
           .expect(response.body.data.cooktime).to.eql(oldRecipe.cooktime)
+          .expect(response.body.data.servings).to.eql(newRecipe.servings)
           .expect(response.body.data.userid).to.eql(newRecipe.userid)
           .expect(response.body.data).to.have.property('image')
           .expect(response.body.data).to.have.property('pic_type')
@@ -373,6 +383,7 @@ describe('Recipes Endpoints', () => {
           pic_type: 'image/jpg',
           pic_name: 'steak-fake.jpg',
           preptime: 'steak-test',
+          servings: 'steak-test',
         }
         async () => {
             const response = await chai.request(app)
@@ -384,6 +395,7 @@ describe('Recipes Endpoints', () => {
             .field('userid', newRecipe.userid)
             .field('description', newRecipe.description)
             .field('preptime', newRecipe.preptime)
+            .field('servings', newRecipe.servings)
             .field('ingredients', JSON.stringify(newRecipe.ingredients))
             .field('instructions', JSON.stringify(newRecipe.instructions))
             .attach('image', './uploads/test.png')
@@ -422,6 +434,7 @@ describe('Recipes Endpoints', () => {
           pic_name: 'Naughty naughty very naughty <script>alert("xss");</script>',
           preptime: 'Naughty naughty very naughty <script>alert("xss");</script>',
           cooktime: 'Naughty naughty very naughty <script>alert("xss");</script>',
+          servings: 'Naughty naughty very naughty <script>alert("xss");</script>',
         }
         async () => {
             const response = await chai.request(app)
@@ -433,6 +446,8 @@ describe('Recipes Endpoints', () => {
             .field('userid', newRecipe.userid)
             .field('description', newRecipe.description)
             .field('preptime', newRecipe.preptime)
+            .field('cooktime', newRecipe.cooktime)
+            .field('servings', newRecipe.servings)
             .field('ingredients', JSON.stringify(newRecipe.ingredients))
             .field('instructions', JSON.stringify(newRecipe.instructions))
             .attach('image', './uploads/test.png')
@@ -444,6 +459,7 @@ describe('Recipes Endpoints', () => {
             .expect(response.body.data.instructions.instructionList[0]).to.eql(expectedResponse)
             .expect(response.body.data.preptime).to.eql(expectedResponse)
             .expect(response.body.data.cooktime).to.eql(expectedResponse)
+            .expect(response.body.data.servings).to.eql(expectedResponse)
             .expect(response.body.data.userid).to.eql(1)
             .expect(response.body.data).to.have.property('image')
             .expect(response.body.data).to.have.property('pic_type')

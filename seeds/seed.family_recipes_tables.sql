@@ -9,7 +9,7 @@ INSERT INTO family_recipes_users (fName, lName, email, picture, role, password, 
 VALUES
     ('Parker', 'Franzi', 'parker.franzi@gmail.com', 'https://res.cloudinary.com/djvgcsmhq/image/upload/v1582076493/profile-with-lucky_yvbtuf.png', 3, '$2a$12$Og.1SPYdsB2kxg1xSZlI2OGbCvWT6u/rdVfXDnCk/XNGyJ5tSrxfa', 'png', 'profile-with-lucky_yvbtuf' );
 
-INSERT INTO family_recipes_recipes (userId, dishName, description, ingredients, instructions, image, prepTime, cookTime, pic_type, public_id)
+INSERT INTO family_recipes_recipes (userId, dishName, description, ingredients, instructions, image, prepTime, cookTime, pic_type, public_id, servings)
 VALUES
     (
         1,
@@ -42,7 +42,8 @@ VALUES
         '5-15 min',
         '1-4 hrs',
         'jpg',
-        'sous-vide-steak_i5ueat'
+        'sous-vide-steak_i5ueat',
+        "however many steaks you make",
     ),
     (
         1,
@@ -73,7 +74,8 @@ VALUES
         '5-15 min',
         '18-48 hrs',
         'jpg',
-        'sous-vide-ribs_dyoax9'
+        'sous-vide-ribs_dyoax9',
+        "servings":"half rack per person",
     ),
     (
         1,
@@ -111,7 +113,8 @@ VALUES
         '15-30 min',
         '30-45 min',
         'jpg',
-        'spicy-peanut-chicken_dahiuf'
+        'spicy-peanut-chicken_dahiuf',
+        "servings":"3-4",
     ),
     (
         1,
@@ -142,7 +145,8 @@ VALUES
         '5-15 min',
         '18-48 hrs',
         'jpg',
-        'sous-vide-pulled_pork_avj68m'
+        'sous-vide-pulled_pork_avj68m',
+        "servings":"Depends how you're using it",
     );
 
 COMMIT;
